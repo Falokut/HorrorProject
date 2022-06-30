@@ -14,6 +14,9 @@ class HORRORPROJECT_API UHorrorInteractComponent : public UActorComponent
 public:
     UHorrorInteractComponent();
     void Interact();
+    UFUNCTION(BlueprintNativeEvent)
+    void Inspect();
+    void Inspect_Implementation();
 
 protected:
     virtual void BeginPlay() override;

@@ -6,6 +6,7 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/HorrorCharacterMovementComponent.h"
 #include "Components/HorrorInteractComponent.h"
+#include "GameFramework/PawnMovementComponent.h"
 
 AHorrorCharacterBase::AHorrorCharacterBase(const FObjectInitializer& ObjInit)
     : Super(ObjInit.SetDefaultSubobjectClass<UHorrorCharacterMovementComponent>(ACharacter::CharacterMovementComponentName))
@@ -18,6 +19,7 @@ AHorrorCharacterBase::AHorrorCharacterBase(const FObjectInitializer& ObjInit)
     GetMesh()->SetupAttachment(CameraComponent);
 
     bUseControllerRotationPitch = true;
+    GetMovementComponent()->GetNavAgentPropertiesRef().bCanCrouch = true;
 }
 
 void AHorrorCharacterBase::BeginPlay()
@@ -40,7 +42,11 @@ void AHorrorCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInpu
     PlayerInputComponent->BindAction("Run", IE_Pressed, this, &AHorrorCharacterBase::Run);
     PlayerInputComponent->BindAction("Run", IE_Released, this, &AHorrorCharacterBase::StopRunning);
 
+    PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &AHorrorCharacterBase::Crouch);
+    PlayerInputComponent->BindAction("Crouch", IE_Released, this, &AHorrorCharacterBase::StopCrouching);
+
     PlayerInputComponent->BindAction("Interact", IE_Released, InteractComponent, &UHorrorInteractComponent::Interact);
+    PlayerInputComponent->BindAction("Inspect", IE_Released, InteractComponent, &UHorrorInteractComponent::Interact);
 
     PlayerInputComponent->BindAxis("MoveForward", this, &AHorrorCharacterBase::MoveForward);
     PlayerInputComponent->BindAxis("MoveRight", this, &AHorrorCharacterBase::MoveRight);
@@ -74,4 +80,12 @@ void AHorrorCharacterBase::Run()
 void AHorrorCharacterBase::StopRunning()
 {
     bIsRunning = false;
+}
+void AHorrorCharacterBase::Crouch()
+{
+    Super::Crouch();
+}
+void AHorrorCharacterBase::StopCrouching()
+{
+    Super::UnCrouch();
 }

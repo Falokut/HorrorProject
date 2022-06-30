@@ -23,6 +23,14 @@ void UHorrorInteractComponent::Interact()
     Interface->Execute_Interact(FocusedActor, GetOwner());
 }
 
+void UHorrorInteractComponent::Inspect_Implementation()
+{
+    TraceForward_Implementation();
+    if (!FocusedActor) return;
+    //Логика осмотра
+    GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "Parent inspect foo implementation");
+}
+
 void UHorrorInteractComponent::BeginPlay()
 {
     Super::BeginPlay();
