@@ -13,6 +13,7 @@ UHorrorInventoryComponent::UHorrorInventoryComponent()
 bool UHorrorInventoryComponent::AddItemToInventory(AHorrorPickupBase* Item)
 {
     if (!Item) return false;
+    return false;
 }
 
 void UHorrorInventoryComponent::BeginPlay()

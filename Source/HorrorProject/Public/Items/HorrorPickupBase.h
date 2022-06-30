@@ -7,9 +7,6 @@
 #include "HorrorCoreTypes.h"
 #include "HorrorPickupBase.generated.h"
 
-/**
- *
- */
 UCLASS()
 class HORRORPROJECT_API AHorrorPickupBase : public AHorrorInteractiveBase
 {

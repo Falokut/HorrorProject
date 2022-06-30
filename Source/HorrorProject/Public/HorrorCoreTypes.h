@@ -3,9 +3,9 @@
 #include "CoreTypes.h"
 #include "HorrorCoreTypes.generated.h"
 
-#pragma Items
+#pragma region Items
 UENUM(BlueprintType)
-enum ETypeOfItem : uint8
+enum class ETypeOfItem : uint8
 {
     Equipment UMETA(DisplayName = "Equipment"),
     QuestItem UMETA(DisplayName = "Quest Item"),
@@ -15,6 +15,8 @@ enum ETypeOfItem : uint8
 USTRUCT(BlueprintType)
 struct FItemData
 {
+    GENERATED_USTRUCT_BODY()
+
     UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "Design")
     UTexture2D* ItemThumbnail;
 
