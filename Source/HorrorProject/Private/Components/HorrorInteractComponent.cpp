@@ -15,12 +15,20 @@ UHorrorInteractComponent::UHorrorInteractComponent()
 
 void UHorrorInteractComponent::Interact()
 {
-    TraceForward_Implementation();
+    Inspect();
     if (!FocusedActor) return;
 
     const auto Interface = Cast<IHorrorInteractiveInterface>(FocusedActor);
     if (!Interface) return;
     Interface->Execute_Interact(FocusedActor, GetOwner());
+}
+
+void UHorrorInteractComponent::Inspect()
+{
+    TraceForward_Implementation();
+    if (!FocusedActor) return;
+
+    //Логика осмотра
 }
 
 void UHorrorInteractComponent::BeginPlay()

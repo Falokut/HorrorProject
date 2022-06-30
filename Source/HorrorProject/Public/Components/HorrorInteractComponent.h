@@ -14,6 +14,7 @@ class HORRORPROJECT_API UHorrorInteractComponent : public UActorComponent
 public:
     UHorrorInteractComponent();
     void Interact();
+    void Inspect();
 
 protected:
     virtual void BeginPlay() override;

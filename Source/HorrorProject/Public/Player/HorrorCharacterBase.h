@@ -42,4 +42,6 @@ private:
 
     void Run();
     void StopRunning();
+    void Crouch();
+    void StopCrouching();
 };
