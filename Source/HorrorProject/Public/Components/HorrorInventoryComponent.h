@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "HorrorCoreTypes.h"
 #include "HorrorInventoryComponent.generated.h"
 
 class AHorrorPickupBase;
@@ -16,9 +17,16 @@ public:
     UHorrorInventoryComponent();
     bool AddItemToInventory(AHorrorPickupBase* Item);
 
+    UPROPERTY(BlueprintAssignable, Category = "Inventory Delegates")
+    FOnNewItemAddSignature NewItemAdd;
+
+    UFUNCTION(BlueprintCallable, Category = "Inventory")
+    AHorrorPickupBase* GetItemAtSlot(const int32 SlotIndex);
+
 protected:
     virtual void BeginPlay() override;
-    bool AddUnstackItemToInventory(AHorrorPickupBase* Item);
+    UFUNCTION()
+    bool AddNewItemToInventory(AHorrorPickupBase* Item);
     bool AddStackItemToInventory(AHorrorPickupBase* Item);
 
 private:

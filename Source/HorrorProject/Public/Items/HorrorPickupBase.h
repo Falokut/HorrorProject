@@ -17,7 +17,16 @@ public:
     UFUNCTION(BlueprintCallable, Category = "Pickup functions")
     FItemData GetItemData() const { return ItemData; }
 
+    void UpdateAmount(const int32 Amount) { ItemData.Amount = FMath::Clamp(ItemData.Amount + Amount, 0, ItemData.MaxAmount); }
+
+    UFUNCTION(BlueprintCallable, Category = "Pickup functions")
+    virtual void Use();
+
 protected:
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Pickup propeties")
     FItemData ItemData;
+
+private:
+    void OnPickedUp();
+    bool bPickedUp = false;
 };
