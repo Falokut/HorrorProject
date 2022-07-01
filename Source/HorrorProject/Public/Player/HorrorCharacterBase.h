@@ -8,6 +8,7 @@
 
 class UCameraComponent;
 class UHorrorInteractComponent;
+class UHorrorInventoryComponent;
 
 UCLASS()
 class HORRORPROJECT_API AHorrorCharacterBase : public ACharacter
@@ -26,6 +27,9 @@ protected:
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Components")
     UHorrorInteractComponent* InteractComponent;
 
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Components")
+    UHorrorInventoryComponent* InventoryComponent;
+
 public:
     virtual void Tick(float DeltaTime) override;
 
@@ -42,6 +46,6 @@ private:
 
     void Run();
     void StopRunning();
-    void Crouch();
+    void StartCrouching();
     void StopCrouching();
 };

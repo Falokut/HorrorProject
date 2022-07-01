@@ -36,6 +36,8 @@ struct FItemData
     FString ItemUniqueName;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PickUp Propeties")
-    TEnumAsByte<ETypeOfItem> ItemType;
+    ETypeOfItem ItemType;
 };
 #pragma endregion
+class AHorrorPickupBase;
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnNewItemAddSignature, AHorrorPickupBase*, Item);

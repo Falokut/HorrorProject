@@ -5,6 +5,7 @@
 AHorrorInteractiveBase::AHorrorInteractiveBase()
 {
     PrimaryActorTick.bCanEverTick = false;
+    InteractiveMesh = CreateDefaultSubobject<UStaticMeshComponent>("InteractiveMesh");
 }
 
 void AHorrorInteractiveBase::Interact_Implementation(AActor* Caller)

@@ -3,10 +3,12 @@
 #include "Player/HorrorCharacterBase.h"
 #include "Camera/CameraComponent.h"
 #include "Components/InputComponent.h"
+#include "GameFramework/PawnMovementComponent.h"
+
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/HorrorCharacterMovementComponent.h"
 #include "Components/HorrorInteractComponent.h"
-#include "GameFramework/PawnMovementComponent.h"
+#include "Components/HorrorInventoryComponent.h"
 
 AHorrorCharacterBase::AHorrorCharacterBase(const FObjectInitializer& ObjInit)
     : Super(ObjInit.SetDefaultSubobjectClass<UHorrorCharacterMovementComponent>(ACharacter::CharacterMovementComponentName))
@@ -14,6 +16,7 @@ AHorrorCharacterBase::AHorrorCharacterBase(const FObjectInitializer& ObjInit)
     PrimaryActorTick.bCanEverTick = true;
     CameraComponent = CreateDefaultSubobject<UCameraComponent>("Camera");
     InteractComponent = CreateDefaultSubobject<UHorrorInteractComponent>("InteractComponent");
+    InventoryComponent = CreateDefaultSubobject<UHorrorInventoryComponent>("InventoryComponent");
 
     CameraComponent->SetupAttachment(GetRootComponent());
     GetMesh()->SetupAttachment(CameraComponent);
@@ -30,6 +33,8 @@ void AHorrorCharacterBase::BeginPlay()
 void AHorrorCharacterBase::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
+    check(InventoryComponent);
+    check(InteractComponent);
 }
 
 void AHorrorCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -42,7 +47,7 @@ void AHorrorCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInpu
     PlayerInputComponent->BindAction("Run", IE_Pressed, this, &AHorrorCharacterBase::Run);
     PlayerInputComponent->BindAction("Run", IE_Released, this, &AHorrorCharacterBase::StopRunning);
 
-    PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &AHorrorCharacterBase::Crouch);
+    PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &AHorrorCharacterBase::StartCrouching);
     PlayerInputComponent->BindAction("Crouch", IE_Released, this, &AHorrorCharacterBase::StopCrouching);
 
     PlayerInputComponent->BindAction("Interact", IE_Released, InteractComponent, &UHorrorInteractComponent::Interact);
@@ -81,7 +86,7 @@ void AHorrorCharacterBase::StopRunning()
 {
     bIsRunning = false;
 }
-void AHorrorCharacterBase::Crouch()
+void AHorrorCharacterBase::StartCrouching()
 {
     Super::Crouch();
 }
