@@ -3,14 +3,7 @@
 #include "CoreTypes.h"
 #include "HorrorCoreTypes.generated.h"
 
-#pragma region Items
-UENUM(BlueprintType)
-enum class ETypeOfItem : uint8
-{
-    Equipment UMETA(DisplayName = "Equipment"),
-    QuestItem UMETA(DisplayName = "Quest Item"),
-    Consumables UMETA(DisplayName = "Consumables")
-};
+#pragma region ItemsAndInventory
 
 USTRUCT(BlueprintType)
 struct FItemData
@@ -18,7 +11,7 @@ struct FItemData
     GENERATED_USTRUCT_BODY()
 
     UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "Design")
-    UTexture2D* ItemThumbnail;
+    UTexture2D* ItemThumbnail = nullptr;
 
     UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "Amount")
     bool bIsStackable = false;
@@ -33,11 +26,16 @@ struct FItemData
     int32 Amount = 1;
 
     UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "PickUp Properties")
-    FString ItemUniqueName;
+    FString ItemUniqueName = "Enter item name here";
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PickUp Propeties")
-    ETypeOfItem ItemType;
+    FString Description = "Enter description here";
 };
-#pragma endregion
+
 class AHorrorPickupBase;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnNewItemAddSignature, AHorrorPickupBase*, Item);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnItemAddSignature);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnItemRemoveSignature, int32, ItemIndex);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnStartFocusSignature);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEndFocusSignature);
+#pragma endregion

@@ -9,6 +9,7 @@
 #include "Components/HorrorCharacterMovementComponent.h"
 #include "Components/HorrorInteractComponent.h"
 #include "Components/HorrorInventoryComponent.h"
+#include "Items/HorrorPickupBase.h"
 
 AHorrorCharacterBase::AHorrorCharacterBase(const FObjectInitializer& ObjInit)
     : Super(ObjInit.SetDefaultSubobjectClass<UHorrorCharacterMovementComponent>(ACharacter::CharacterMovementComponentName))
@@ -50,8 +51,33 @@ void AHorrorCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInpu
     PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &AHorrorCharacterBase::StartCrouching);
     PlayerInputComponent->BindAction("Crouch", IE_Released, this, &AHorrorCharacterBase::StopCrouching);
 
-    PlayerInputComponent->BindAction("Interact", IE_Released, InteractComponent, &UHorrorInteractComponent::Interact);
-    PlayerInputComponent->BindAction("Inspect", IE_Released, InteractComponent, &UHorrorInteractComponent::Interact);
+    PlayerInputComponent->BindAction("Interact", IE_Pressed, InteractComponent, &UHorrorInteractComponent::Interact);
+    PlayerInputComponent->BindAction("Inspect", IE_Pressed, InteractComponent, &UHorrorInteractComponent::Interact);
+
+    PlayerInputComponent->BindAction("Use", IE_Pressed, InventoryComponent, &UHorrorInventoryComponent::UseEquipedItem);
+    PlayerInputComponent->BindAction("Drop", IE_Pressed, InventoryComponent, &UHorrorInventoryComponent::DropEquipedItem);
+
+    /*
+     * Для экипировки предметов
+     * Ключ - название Action event
+     * Значение - индекс ячейки в инвентаре
+     */
+    TMap<FName, char> PressedHotKeysActions  //
+        {
+            {"FirstHotkey", 48},   //
+            {"SecondHotkey", 49},  //
+            {"ThirdHotkey", 50},   //
+            {"FourthHotkey", 51},  //
+            {"FifthHotkey", 52}    //
+        };
+
+    //Бинд Hotkey, через которые можно экипировывать предметы из инвентаря
+    for (const auto& Typle : PressedHotKeysActions)
+    {
+        FInputActionBinding ActionBinding(Typle.Key, IE_Pressed);
+        ActionBinding.ActionDelegate.GetDelegateForManualSet().BindLambda([&]() { InventoryComponent->EquipItemAtSlot(Typle.Value); });
+        PlayerInputComponent->AddActionBinding(ActionBinding);
+    }
 
     PlayerInputComponent->BindAxis("MoveForward", this, &AHorrorCharacterBase::MoveForward);
     PlayerInputComponent->BindAxis("MoveRight", this, &AHorrorCharacterBase::MoveRight);

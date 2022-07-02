@@ -9,6 +9,7 @@
 class UCameraComponent;
 class UHorrorInteractComponent;
 class UHorrorInventoryComponent;
+class AHorrorPickupBase;
 
 UCLASS()
 class HORRORPROJECT_API AHorrorCharacterBase : public ACharacter

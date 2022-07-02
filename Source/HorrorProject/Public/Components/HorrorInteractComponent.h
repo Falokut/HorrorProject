@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "HorrorCoreTypes.h"
 #include "HorrorInteractComponent.generated.h"
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
@@ -17,15 +18,18 @@ public:
     UFUNCTION(BlueprintNativeEvent)
     void Inspect();
     void Inspect_Implementation();
+    UPROPERTY(BlueprintAssignable, Category = "Interact Delegates")
+    FOnStartFocusSignature OnStartFocus;
+
+    UPROPERTY(BlueprintAssignable, Category = "Interact Delegates")
+    FOnEndFocusSignature OnEndFocus;
 
 protected:
     virtual void BeginPlay() override;
+    virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction);
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Interactions")
     float TraceDistance = 1000.f;
-
-    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Interactions")
-    float TraceRate = 1.f;
 
     APlayerController* GetPlayerController() const;
     bool GetPlayerViewPoint(FVector& ViewLocation, FRotator& ViewRotation) const;
@@ -39,5 +43,4 @@ protected:
 private:
     AActor* FocusedActor = nullptr;
     void EndFocus();
-    FTimerHandle TraceTimerHandle;
 };

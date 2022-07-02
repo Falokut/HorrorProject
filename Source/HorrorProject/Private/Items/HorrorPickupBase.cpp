@@ -17,19 +17,52 @@ void AHorrorPickupBase::Interact_Implementation(AActor* Caller)
     if (Inventory->AddItemToInventory(this)) OnPickedUp();
 }
 
+void AHorrorPickupBase::OnDropped()
+{
+    InteractiveMesh->SetVisibility(true, true);
+    InteractiveMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+    InteractiveMesh->SetSimulatePhysics(true);
+    bPickedUp = false;
+}
+
 void AHorrorPickupBase::Use()
 {
+    UpdateAmount(-1);
     if (ItemData.Amount == 0)
     {
         Destroy();
         return;
     }
-    UpdateAmount(-1);
+}
+void AHorrorPickupBase ::SetNewItemData(FItemData NewItemData)
+{
+    ItemData = NewItemData;
+}
+void AHorrorPickupBase::BeginPlay()
+{
+    Super::BeginPlay();
+    checkf(InteractiveMesh, TEXT("Mesh isn't set"));
+    checkf(ItemData.Amount <= ItemData.MaxAmount, TEXT("Amount can't be bigger than MaxAmount"));
 }
 
 void AHorrorPickupBase::OnPickedUp()
 {
     InteractiveMesh->SetVisibility(false, true);
     InteractiveMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    InteractiveMesh->SetSimulatePhysics(false);
     bPickedUp = true;
+}
+
+void AHorrorPickupBase::OnEquiped(bool bIsEquiping)
+{
+    if (bIsEquiping)
+    {
+        InteractiveMesh->SetVisibility(true, true);
+        InteractiveMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    }
+    else
+    {
+        InteractiveMesh->SetVisibility(false, true);
+        InteractiveMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    }
 }

@@ -13,18 +13,23 @@ class HORRORPROJECT_API AHorrorPickupBase : public AHorrorInteractiveBase
     GENERATED_BODY()
 public:
     virtual void Interact_Implementation(AActor* Caller) override;
+    void OnDropped();
+    void OnEquiped(bool bIsEquiping);
 
     UFUNCTION(BlueprintCallable, Category = "Pickup functions")
     FItemData GetItemData() const { return ItemData; }
 
-    void UpdateAmount(const int32 Amount) { ItemData.Amount = FMath::Clamp(ItemData.Amount + Amount, 0, ItemData.MaxAmount); }
+    void UpdateAmount(int32 Amount) { ItemData.Amount = FMath::Clamp(ItemData.Amount + Amount, 0, ItemData.MaxAmount); }
 
     UFUNCTION(BlueprintCallable, Category = "Pickup functions")
     virtual void Use();
 
+    void SetNewItemData(FItemData NewItemData);
+
 protected:
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Pickup propeties")
     FItemData ItemData;
+    virtual void BeginPlay() override;
 
 private:
     void OnPickedUp();

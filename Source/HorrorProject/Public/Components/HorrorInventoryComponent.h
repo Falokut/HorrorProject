@@ -16,12 +16,31 @@ class HORRORPROJECT_API UHorrorInventoryComponent : public UActorComponent
 public:
     UHorrorInventoryComponent();
     bool AddItemToInventory(AHorrorPickupBase* Item);
+    void UseEquipedItem();
+    void DropEquipedItem();
+
+    //Возвращает индекс экипированного предмета
+    UFUNCTION(BlueprintCallable, Category = "Inventory functions")
+    int32 GetCurrentIndex() const { return CurrentIndex; }
+
+    void EquipItemAtSlot(char Index);
+
+    AHorrorPickupBase* GetItemAtInventoryByIndex(const int32 Index);
 
     UPROPERTY(BlueprintAssignable, Category = "Inventory Delegates")
     FOnNewItemAddSignature NewItemAdd;
 
+    UPROPERTY(BlueprintAssignable, Category = "Inventory Delegates")
+    FOnItemAddSignature OnItemAdd;
+
+    UPROPERTY(BlueprintAssignable, Category = "Inventory Delegates")
+    FOnItemRemoveSignature OnItemRemove;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Equipment")
+    FName EquipmentSoketName = "EquipmentSoket";
+
     UFUNCTION(BlueprintCallable, Category = "Inventory")
-    AHorrorPickupBase* GetItemAtSlot(const int32 SlotIndex);
+    bool IsInventoryEmpty() const;
 
 protected:
     virtual void BeginPlay() override;
@@ -31,4 +50,9 @@ protected:
 
 private:
     TArray<AHorrorPickupBase*> Inventory;
+    void SpawnEquipedItem();
+    void RemoveCurrentItem();
+
+    //Индекс экипированного предмета, для пустых рук присваивается значение INDEX_NONE
+    int32 CurrentIndex = INDEX_NONE;
 };
