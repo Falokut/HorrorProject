@@ -9,6 +9,7 @@
 #include "Components/HorrorCharacterMovementComponent.h"
 #include "Components/HorrorInteractComponent.h"
 #include "Components/HorrorInventoryComponent.h"
+#include "Items/HorrorPickupBase.h"
 
 AHorrorCharacterBase::AHorrorCharacterBase(const FObjectInitializer& ObjInit)
     : Super(ObjInit.SetDefaultSubobjectClass<UHorrorCharacterMovementComponent>(ACharacter::CharacterMovementComponentName))
@@ -52,6 +53,29 @@ void AHorrorCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 
     PlayerInputComponent->BindAction("Interact", IE_Released, InteractComponent, &UHorrorInteractComponent::Interact);
     PlayerInputComponent->BindAction("Inspect", IE_Released, InteractComponent, &UHorrorInteractComponent::Interact);
+    PlayerInputComponent->BindAction("UseEquipedItem", IE_Pressed, InventoryComponent, &UHorrorInventoryComponent::UseEquipedItem);
+
+    /*
+     * *Для экипировки предметов
+     * Ключ - название Action event
+     * Значение - индекс ячейки в инвентаре
+     */
+    TMap<FName, uint8> PressedHotKeysActions  //
+        {
+            {"FirstHotkey", 0},   //
+            {"SecondHotkey", 1},  //
+            {"ThirdHotkey", 2},   //
+            {"FourthHotkey", 3},  //
+            {"FifthHotkey", 4}    //
+        };
+
+    //Бинд Hotkey, через которые можно экипировывать предметы из инвентаря
+    for (const auto& Typle : PressedHotKeysActions)
+    {
+        FInputActionBinding ActionBinding(Typle.Key, IE_Pressed);
+        ActionBinding.ActionDelegate.GetDelegateForManualSet().BindLambda([&]() { InventoryComponent->EquipItemAtSlot(Typle.Value); });
+        PlayerInputComponent->AddActionBinding(ActionBinding);
+    }
 
     PlayerInputComponent->BindAxis("MoveForward", this, &AHorrorCharacterBase::MoveForward);
     PlayerInputComponent->BindAxis("MoveRight", this, &AHorrorCharacterBase::MoveRight);

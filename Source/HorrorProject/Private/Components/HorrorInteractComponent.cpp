@@ -10,12 +10,11 @@
 
 UHorrorInteractComponent::UHorrorInteractComponent()
 {
-    PrimaryComponentTick.bCanEverTick = false;
+    PrimaryComponentTick.bCanEverTick = true;
 }
 
 void UHorrorInteractComponent::Interact()
 {
-    TraceForward_Implementation();
     if (!FocusedActor) return;
 
     const auto Interface = Cast<IHorrorInteractiveInterface>(FocusedActor);
@@ -25,7 +24,6 @@ void UHorrorInteractComponent::Interact()
 
 void UHorrorInteractComponent::Inspect_Implementation()
 {
-    TraceForward_Implementation();
     if (!FocusedActor) return;
     //Логика осмотра
     GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "Parent inspect foo implementation");
@@ -35,7 +33,12 @@ void UHorrorInteractComponent::BeginPlay()
 {
     Super::BeginPlay();
     check(GetWorld());
-    GetWorld()->GetTimerManager().SetTimer(TraceTimerHandle, this, &UHorrorInteractComponent::TraceForward_Implementation, TraceRate, true);
+}
+
+void UHorrorInteractComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+{
+    Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+    TraceForward_Implementation();
 }
 
 APlayerController* UHorrorInteractComponent::GetPlayerController() const
@@ -89,9 +92,6 @@ void UHorrorInteractComponent::TraceForward_Implementation()
     FHitResult HitResult;
     MakeHit(HitResult, TraceStart, TraceEnd);
 
-    DrawDebugLine(GetWorld(), TraceStart, HitResult.ImpactPoint, FColor::Red, false, 3.0f, 0, 3.0f);
-    DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 10.0f, 24, FColor::Emerald, false, 5.0f);
-
     if (!HitResult.bBlockingHit) return;
 
     AActor* Interactiable = HitResult.GetActor();
@@ -112,6 +112,7 @@ void UHorrorInteractComponent::TraceForward_Implementation()
         if (Interface)
         {
             Interface->Execute_StartFocus(Interactiable);
+            OnStartFocus.Broadcast();
         }
     }
 }
@@ -122,4 +123,5 @@ void UHorrorInteractComponent::EndFocus()
 
     IHorrorInteractiveInterface* Interface = Cast<IHorrorInteractiveInterface>(FocusedActor);
     if (Interface) Interface->Execute_EndFocus(FocusedActor);
+    OnEndFocus.Broadcast();
 }
