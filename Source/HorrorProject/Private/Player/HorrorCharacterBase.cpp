@@ -62,13 +62,13 @@ void AHorrorCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInpu
      *  люч - название Action event
      * «начение - индекс €чейки в инвентаре
      */
-    TMap<FName, char> PressedHotKeysActions  //
+    static const TMap<FName, char> PressedHotKeysActions  //
         {
-            {"FirstHotkey", 48},   //
-            {"SecondHotkey", 49},  //
-            {"ThirdHotkey", 50},   //
-            {"FourthHotkey", 51},  //
-            {"FifthHotkey", 52}    //
+            {"FirstHotkey", '0'},   //
+            {"SecondHotkey", '1'},  //
+            {"ThirdHotkey", '2'},   //
+            {"FourthHotkey", '3'},  //
+            {"FifthHotkey", '4'}    //
         };
 
     //Ѕинд Hotkey, через которые можно экипировывать предметы из инвентар€

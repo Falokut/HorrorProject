@@ -22,6 +22,9 @@ void AHorrorPickupBase::OnDropped()
     InteractiveMesh->SetVisibility(true, true);
     InteractiveMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
     InteractiveMesh->SetSimulatePhysics(true);
+
+    //Устанавливаем значение 1, потому что предметы выбрасываются по одной штуке
+    ItemData.Amount = 1;
     bPickedUp = false;
 }
 
@@ -53,16 +56,13 @@ void AHorrorPickupBase::OnPickedUp()
     bPickedUp = true;
 }
 
-void AHorrorPickupBase::OnEquiped(bool bIsEquiping)
+void AHorrorPickupBase::OnEquiped(bool bIsEquipping)
 {
-    if (bIsEquiping)
-    {
+    if (bIsEquipping)
         InteractiveMesh->SetVisibility(true, true);
-        InteractiveMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-    }
     else
-    {
         InteractiveMesh->SetVisibility(false, true);
-        InteractiveMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-    }
+
+    InteractiveMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    InteractiveMesh->SetSimulatePhysics(false);
 }
