@@ -11,7 +11,7 @@ struct FItemData
     GENERATED_USTRUCT_BODY()
 
     UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "Design")
-    UTexture2D* ItemThumbnail;
+    UTexture2D* ItemThumbnail = nullptr;
 
     UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "Amount")
     bool bIsStackable = false;

@@ -122,6 +122,8 @@ void UHorrorInteractComponent::EndFocus()
     if (!FocusedActor) return;
 
     IHorrorInteractiveInterface* Interface = Cast<IHorrorInteractiveInterface>(FocusedActor);
-    if (Interface) Interface->Execute_EndFocus(FocusedActor);
+    if (!Interface) return;
+
+    Interface->Execute_EndFocus(FocusedActor);
     OnEndFocus.Broadcast();
 }

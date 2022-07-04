@@ -17,18 +17,22 @@ public:
     UHorrorInventoryComponent();
     bool AddItemToInventory(AHorrorPickupBase* Item);
     void UseEquipedItem();
+    void DropEquipedItem();
 
     //Возвращает индекс экипированного предмета
     UFUNCTION(BlueprintCallable, Category = "Inventory functions")
     int32 GetCurrentIndex() const { return CurrentIndex; }
 
-    void EquipItemAtSlot(const unsigned int Slot);
+    void EquipItemAtSlot(char Index);
+
+    AHorrorPickupBase* GetItemAtInventoryByIndex(const int32 Index);
 
     UPROPERTY(BlueprintAssignable, Category = "Inventory Delegates")
     FOnNewItemAddSignature NewItemAdd;
 
     UPROPERTY(BlueprintAssignable, Category = "Inventory Delegates")
     FOnItemAddSignature OnItemAdd;
+
     UPROPERTY(BlueprintAssignable, Category = "Inventory Delegates")
     FOnItemRemoveSignature OnItemRemove;
 
@@ -47,7 +51,8 @@ protected:
 private:
     TArray<AHorrorPickupBase*> Inventory;
     void SpawnEquipedItem();
+    void RemoveCurrentItem();
 
-    //Индекс экипированного предмета
-    unsigned int CurrentIndex = 0;
+    //Индекс экипированного предмета, для пустых рук присваивается значение INDEX_NONE
+    int32 CurrentIndex = INDEX_NONE;
 };

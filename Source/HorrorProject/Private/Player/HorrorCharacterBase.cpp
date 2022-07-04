@@ -51,22 +51,24 @@ void AHorrorCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInpu
     PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &AHorrorCharacterBase::StartCrouching);
     PlayerInputComponent->BindAction("Crouch", IE_Released, this, &AHorrorCharacterBase::StopCrouching);
 
-    PlayerInputComponent->BindAction("Interact", IE_Released, InteractComponent, &UHorrorInteractComponent::Interact);
-    PlayerInputComponent->BindAction("Inspect", IE_Released, InteractComponent, &UHorrorInteractComponent::Interact);
-    PlayerInputComponent->BindAction("UseEquipedItem", IE_Pressed, InventoryComponent, &UHorrorInventoryComponent::UseEquipedItem);
+    PlayerInputComponent->BindAction("Interact", IE_Pressed, InteractComponent, &UHorrorInteractComponent::Interact);
+    PlayerInputComponent->BindAction("Inspect", IE_Pressed, InteractComponent, &UHorrorInteractComponent::Interact);
+
+    PlayerInputComponent->BindAction("Use", IE_Pressed, InventoryComponent, &UHorrorInventoryComponent::UseEquipedItem);
+    PlayerInputComponent->BindAction("Drop", IE_Pressed, InventoryComponent, &UHorrorInventoryComponent::DropEquipedItem);
 
     /*
-     * *Для экипировки предметов
+     * Для экипировки предметов
      * Ключ - название Action event
      * Значение - индекс ячейки в инвентаре
      */
-    TMap<FName, uint8> PressedHotKeysActions  //
+    TMap<FName, char> PressedHotKeysActions  //
         {
-            {"FirstHotkey", 0},   //
-            {"SecondHotkey", 1},  //
-            {"ThirdHotkey", 2},   //
-            {"FourthHotkey", 3},  //
-            {"FifthHotkey", 4}    //
+            {"FirstHotkey", 48},   //
+            {"SecondHotkey", 49},  //
+            {"ThirdHotkey", 50},   //
+            {"FourthHotkey", 51},  //
+            {"FifthHotkey", 52}    //
         };
 
     //Бинд Hotkey, через которые можно экипировывать предметы из инвентаря

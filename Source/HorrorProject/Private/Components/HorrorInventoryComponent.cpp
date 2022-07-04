@@ -2,6 +2,7 @@
 
 #include "Components/HorrorInventoryComponent.h"
 #include "Items/HorrorPickupBase.h"
+#include "HorrorCoreTypes.h"
 #include "GameFramework/Character.h"
 #include "Containers/Array.h"
 
@@ -72,33 +73,84 @@ bool UHorrorInventoryComponent::AddStackItemToInventory(AHorrorPickupBase* Item)
 void UHorrorInventoryComponent::SpawnEquipedItem()
 {
     const auto Character = Cast<ACharacter>(GetOwner());
-    if (!Character || !Character->GetMesh()) return;
+    if (!Character || !Character->GetMesh() || !Inventory[CurrentIndex]) return;
 
+    if (!Inventory.IsValidIndex(CurrentIndex) || !Inventory[CurrentIndex]) return;
     FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget, false);
     Inventory[CurrentIndex]->AttachToComponent(Character->GetMesh(), AttachmentRules, EquipmentSoketName);
     Inventory[CurrentIndex]->OnEquiped(true);
 }
 
+void UHorrorInventoryComponent::RemoveCurrentItem()
+{
+    Inventory[CurrentIndex] = nullptr;
+    OnItemRemove.Broadcast(CurrentIndex);
+    CurrentIndex = INDEX_NONE;
+}
+
 void UHorrorInventoryComponent::UseEquipedItem()
 {
-    if (!Inventory[CurrentIndex]) return;
+    if (!Inventory.IsValidIndex(CurrentIndex) || !Inventory[CurrentIndex]) return;
+
     Inventory[CurrentIndex]->Use();
     if (Inventory[CurrentIndex]->GetItemData().Amount == 0)
     {
-        Inventory[CurrentIndex] = nullptr;
-        OnItemRemove.Broadcast(CurrentIndex);
-
-        //Переключение на следующий предмет
-        const int32 NewIndex = Inventory.IndexOfByPredicate([](AHorrorPickupBase* FindItem) { return FindItem; });
-        if (NewIndex != INDEX_NONE) EquipItemAtSlot(NewIndex);
+        RemoveCurrentItem();
     }
 }
 
-void UHorrorInventoryComponent::EquipItemAtSlot(const unsigned int Slot)
+void UHorrorInventoryComponent::EquipItemAtSlot(char Index)
 {
-    if (!Inventory.IsValidIndex(Slot) || !Inventory[Slot]) return;
+    int32 NewIndex = (Index - '0');
+    if (!Inventory.IsValidIndex(NewIndex)) return;
 
-    Inventory[Slot]->OnEquiped(false);
-    CurrentIndex = Slot;
+    if (!Inventory.IsValidIndex(CurrentIndex) || !Inventory[CurrentIndex])
+    {
+        CurrentIndex = NewIndex;
+    }
+    else
+    {
+        Inventory[CurrentIndex]->OnEquiped(false);
+        CurrentIndex = NewIndex;
+    }
     SpawnEquipedItem();
+}
+
+AHorrorPickupBase* UHorrorInventoryComponent::GetItemAtInventoryByIndex(const int32 Index)
+{
+    if (!Inventory.IsValidIndex(Index)) return nullptr;
+    return Inventory[Index];
+}
+
+void UHorrorInventoryComponent::DropEquipedItem()
+{
+    if (CurrentIndex == INDEX_NONE || !Inventory[CurrentIndex]) return;
+
+    FDetachmentTransformRules DetachmentRules(EDetachmentRule::KeepWorld, false);
+
+    if (!Inventory[CurrentIndex]->GetItemData().bIsStackable)
+    {
+        Inventory[CurrentIndex]->DetachFromActor(DetachmentRules);
+        Inventory[CurrentIndex]->OnDropped();
+        RemoveCurrentItem();
+        return;
+    }
+
+    const auto Character = Cast<ACharacter>(GetOwner());
+    if (!Character) return;
+
+    const int32 DroppingRange = 500;
+    const FVector SpawnLocation =
+        Character->GetMesh()->GetSocketLocation(EquipmentSoketName) + Character->GetActorForwardVector() * DroppingRange;
+    FTransform SpawnTransform(FRotator::ZeroRotator, SpawnLocation);
+
+    const auto EquippedItem = Inventory[CurrentIndex];
+    const auto NewItem = GetWorld()->SpawnActor<AHorrorPickupBase>(EquippedItem->StaticClass(), SpawnTransform, FActorSpawnParameters());
+    if (!NewItem) return;
+
+    FItemData NewItemData = EquippedItem->GetItemData();
+    NewItemData.Amount = 1;
+    NewItem->SetNewItemData(NewItemData);
+    NewItem->DetachFromActor(DetachmentRules);
+    NewItem->OnDropped();
 }
