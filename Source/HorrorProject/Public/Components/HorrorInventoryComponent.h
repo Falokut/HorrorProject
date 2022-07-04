@@ -25,7 +25,8 @@ public:
 
     void EquipItemAtSlot(char Index);
 
-    AHorrorPickupBase* GetItemAtInventoryByIndex(const int32 Index);
+    UFUNCTION(BlueprintCallable, Category = "Inventory functions")
+    AHorrorPickupBase* GetItemAtInventoryByIndex(const int32 Index) const;
 
     UPROPERTY(BlueprintAssignable, Category = "Inventory Delegates")
     FOnNewItemAddSignature NewItemAdd;

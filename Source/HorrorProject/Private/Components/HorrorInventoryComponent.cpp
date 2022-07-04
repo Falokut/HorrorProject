@@ -67,6 +67,7 @@ bool UHorrorInventoryComponent::AddStackItemToInventory(AHorrorPickupBase* Item)
     else
     {
         Inventory[AvalibleSlot]->UpdateAmount(Item->GetItemData().Amount);
+        Item->Destroy();
         return true;
     }
 }
@@ -116,7 +117,7 @@ void UHorrorInventoryComponent::EquipItemAtSlot(char Index)
     SpawnEquipedItem();
 }
 
-AHorrorPickupBase* UHorrorInventoryComponent::GetItemAtInventoryByIndex(const int32 Index)
+AHorrorPickupBase* UHorrorInventoryComponent::GetItemAtInventoryByIndex(const int32 Index) const
 {
     if (!Inventory.IsValidIndex(Index)) return nullptr;
     return Inventory[Index];
@@ -128,7 +129,7 @@ void UHorrorInventoryComponent::DropEquipedItem()
 
     FDetachmentTransformRules DetachmentRules(EDetachmentRule::KeepWorld, false);
 
-    if (!Inventory[CurrentIndex]->GetItemData().bIsStackable)
+    if (Inventory[CurrentIndex]->GetItemData().Amount == 1)
     {
         Inventory[CurrentIndex]->DetachFromActor(DetachmentRules);
         Inventory[CurrentIndex]->OnDropped();
@@ -139,18 +140,14 @@ void UHorrorInventoryComponent::DropEquipedItem()
     const auto Character = Cast<ACharacter>(GetOwner());
     if (!Character) return;
 
-    const int32 DroppingRange = 500;
-    const FVector SpawnLocation =
-        Character->GetMesh()->GetSocketLocation(EquipmentSoketName) + Character->GetActorForwardVector() * DroppingRange;
-    FTransform SpawnTransform(FRotator::ZeroRotator, SpawnLocation);
+    const int32 DroppingRange = 100;
+    FVector Location = Character->GetMesh()->GetSocketLocation(EquipmentSoketName) + Character->GetActorForwardVector() * DroppingRange;
 
-    const auto EquippedItem = Inventory[CurrentIndex];
-    const auto NewItem = GetWorld()->SpawnActor<AHorrorPickupBase>(EquippedItem->StaticClass(), SpawnTransform, FActorSpawnParameters());
+    const auto NewItem =
+        GetWorld()->SpawnActor<AHorrorPickupBase>(Inventory[CurrentIndex]->GetItemData().ItemClass, Location, FRotator::ZeroRotator);
     if (!NewItem) return;
 
-    FItemData NewItemData = EquippedItem->GetItemData();
-    NewItemData.Amount = 1;
-    NewItem->SetNewItemData(NewItemData);
     NewItem->DetachFromActor(DetachmentRules);
     NewItem->OnDropped();
+    Inventory[CurrentIndex]->UpdateAmount(-1);
 }

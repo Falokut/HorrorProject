@@ -22,6 +22,9 @@ void AHorrorPickupBase::OnDropped()
     InteractiveMesh->SetVisibility(true, true);
     InteractiveMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
     InteractiveMesh->SetSimulatePhysics(true);
+
+    //Устанавливаем значение 1, потому что предметы выбрасываются по одной штуке
+    ItemData.Amount = 1;
     bPickedUp = false;
 }
 

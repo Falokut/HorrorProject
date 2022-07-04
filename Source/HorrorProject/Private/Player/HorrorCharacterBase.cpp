@@ -64,11 +64,11 @@ void AHorrorCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInpu
      */
     TMap<FName, char> PressedHotKeysActions  //
         {
-            {"FirstHotkey", 48},   //
-            {"SecondHotkey", 49},  //
-            {"ThirdHotkey", 50},   //
-            {"FourthHotkey", 51},  //
-            {"FifthHotkey", 52}    //
+            {"FirstHotkey", '0'},   //
+            {"SecondHotkey", '1'},  //
+            {"ThirdHotkey", '2'},   //
+            {"FourthHotkey", '3'},  //
+            {"FifthHotkey", '4'}    //
         };
 
     //Бинд Hotkey, через которые можно экипировывать предметы из инвентаря
